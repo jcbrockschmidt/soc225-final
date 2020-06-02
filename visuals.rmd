@@ -1,0 +1,97 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Setup environment
+```{r}
+#install.packages("tidyverse")
+#install.packages("gridExtra")
+library(tidyverse)
+library(gridExtra)
+alcData <- read_csv("data/HappinessAlcoholRegulations-2016.csv")
+```
+
+```{r}
+alcData <- alcData %>%
+  mutate(OnPremisePurchaseAge = parse_number(OnPremisePurchaseAge))
+
+# Remove NA values
+rowsBefore <- nrow(alcData)
+alcData <- alcData[!is.na(alcData$OnPremisePurchaseAge), ]
+rowsAfter <- nrow(alcData)
+sprintf("%d/%d rows removed", rowsBefore - rowsAfter, rowsBefore, rowsAfter)
+
+alcData
+```
+
+# Plots
+
+```{r}
+ageVsFreedom <- alcData %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = `Freedom`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+ageVsHapp <- alcData %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = `HappinessScore`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+grid.arrange(ageVsFreedom, ageVsHapp, ncol=2)
+```
+
+```{r}
+beerVsHapp <- alcData %>%
+  ggplot(aes(x = `Beer_PerCapita`, 
+             y = `HappinessScore`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+wineVsHapp <- alcData %>%
+  ggplot(aes(x = `Wine_PerCapita`, 
+             y = `HappinessScore`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+spiritVsHapp <- alcData %>%
+  ggplot(aes(x = `Spirit_PerCapita`, 
+             y = `HappinessScore`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+grid.arrange(beerVsHapp, wineVsHapp, spiritVsHapp, ncol=2)
+```
+
+```{r}
+beerVsFree <- alcData %>%
+  ggplot(aes(x = `Beer_PerCapita`, 
+             y = `Freedom`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+wineVsFree <- alcData %>%
+  ggplot(aes(x = `Wine_PerCapita`, 
+             y = `Freedom`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+spiritVsFree <- alcData %>%
+  ggplot(aes(x = `Spirit_PerCapita`, 
+             y = `Freedom`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+
+grid.arrange(beerVsFree, wineVsFree, spiritVsFree, ncol=2)
+```
+
+```{r}
+alcData %>%
+  ggplot(aes(x = `HappinessScore`, 
+             y = `Freedom`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm")
+```
+
