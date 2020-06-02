@@ -1,0 +1,64 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Setup
+## Install packages
+```{r}
+install.packages("tidyverse")
+```
+## Load libraries
+```{r}
+library(tidyverse)
+library(rvest)
+library(httr)
+```
+
+# Data preparation
+
+## Load CSV data
+```{r}
+worldHapp <- read_csv("data/WorldHappiness-2016.csv", na = c("NA", "N/A"))
+alcCons <- read_csv("data/HappinessAlcoholConsumption-2016.csv", na = c("NA", "N/A"))
+```
+
+## Scrape minimum drinking ages
+```{r}
+procon_page <- 
+  read_html("https://drinkingage.procon.org/minimum-legal-drinking-age-in-other-countries/")
+drinking_table <- html_node(procon_page, 
+                     css = "table.newblue-table-2")
+minDrinkAges <- html_table(drinking_table) %>%
+  as_tibble()
+#minDrinkAges <- as_tibble(minDrinkAges)
+colnames(minDrinkAges) <- c("Country", "OnPremisePurchaseAge", "OffPremisePurchaseAge", "Notes")
+minDrinkAges <- minDrinkAges %>% filter(Country != "Country")
+
+minDrinkAges
+```
+
+## Merge data
+```{r}
+# Perform an inner join by country
+alcKeep = c("Country", "Hemisphere", "HDI", "GDP_PerCapita", "Beer_PerCapita", "Spirit_PerCapita", "Wine_PerCapita")
+worldAndAlc <- merge(worldHapp, alcCons[, alcKeep], by="Country", all=FALSE)
+allData <- merge(worldAndAlc, minDrinkAges, by="Country", all=FALSE)
+
+allData
+```
+
+## Row loss statistics
+```{r}
+rowsBefore <- max(nrow(worldHapp), nrow(alcCons), nrow(minDrinkAges))
+rowsAfter <- nrow(allData)
+rowLoss <- rowsBefore - rowsAfter
+sprintf("%d/%d rows kept (%d countries excluded)", rowsAfter, rowsBefore, rowLoss)
+```
+
+## Write data
+```{r}
+write.csv(minDrinkAges, "data/MinimumDrinkingAges-2016.csv")
+write.csv(allData, "data/HappinessAlcoholRegulations-2016.csv");
+```
+
