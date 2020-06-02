@@ -6,8 +6,9 @@ output: html_notebook
 # Setup
 ## Install packages
 ```{r}
-install.packages("tidyverse")
+#install.packages("tidyverse")
 ```
+
 ## Load libraries
 ```{r}
 library(tidyverse)
@@ -58,7 +59,7 @@ sprintf("%d/%d rows kept (%d countries excluded)", rowsAfter, rowsBefore, rowLos
 
 ## Write data
 ```{r}
-write.csv(minDrinkAges, "data/MinimumDrinkingAges-2016.csv")
-write.csv(allData, "data/HappinessAlcoholRegulations-2016.csv");
+write.csv(minDrinkAges, "data/MinimumDrinkingAges-2016.csv", row.names=FALSE)
+write.csv(allData, "data/HappinessAlcoholRegulations-2016.csv", row.names=FALSE)
 ```
 
