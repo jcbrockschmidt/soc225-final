@@ -95,3 +95,64 @@ alcData %>%
   geom_smooth(method = "lm")
 ```
 
+```{r}
+alcData <- alcData %>% mutate(mean = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita)/3)
+
+alcData %>%
+  ggplot(aes(x = `HappinessScore`, 
+             y = `mean`)) +
+  geom_point(alpha = .5) +
+  geom_smooth(method = "lm") +
+facet_wrap(~Region) +
+  xlab("Happiness Score") +
+  ylab("Average Alcohol Consumption Per Capita") +
+  labs(title = "How Alcohol Consumption Relates to Happiness Score by Region", 
+       subtitle = "Happiness Score was created based on a scaled happiness survey") 
+```
+
+```{r}
+alcData <- alcData %>% mutate(mean = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita)/3)
+
+alcData %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = `mean`)) +
+  geom_col(fill = "blue3") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+facet_wrap(~Region) +
+  xlab("Legal Drinking Age") +
+  ylab("Average Alcohol Consumption Per Capita") +
+  labs(title = "How Alcohol Consumption Relates to Legal Drinking Age by Region")
+```
+
+```{r}
+alcData <- alcData %>% arrange(alcData$HappinessRank)
+top <- alcData %>% head(5)
+bottom <- alcData %>% tail(5)
+alc<- full_join(top,bottom)
+alc <- alc %>% mutate(mean = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita)/3)
+alc %>%
+  ggplot(aes(x = factor(Country,c('Denmark', 'Switzerland', 'Iceland', 'Norway', 'Finland', 'Chad', 'Madagascar', 'Tanzania', 'Liberia', 'Syria')), 
+             y = `mean`, fill = GDP_PerCapita)) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  xlab("Top 5 and Bottom 5 Happiness Scoring Countries (Left to Right)") +
+  ylab("Average Alcohol Consumption Per Capita") +
+  labs(title = "How Alcohol Consumption Relates to Happiness Scores by Country", fill='GDP Per Capita')
+```
+
+```{r}
+alcData <- alcData %>% arrange(alcData$HappinessRank)
+top <- alcData %>% head(5)
+bottom <- alcData %>% tail(5)
+alc<- full_join(top,bottom)
+alc <- alc %>% mutate(mean = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita)/3)
+plot <- alc %>%
+  ggplot(aes(x = factor(Country,c('Denmark', 'Switzerland', 'Iceland', 'Norway', 'Finland', 'Chad', 'Madagascar', 'Tanzania', 'Liberia', 'Syria')), 
+             y = `mean`, fill = factor(OnPremisePurchaseAge))) +
+  geom_col() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  xlab("Top 5 and Bottom 5 Happiness Scoring Countries (Left to Right)") +
+  ylab("Average Alcohol Consumption Per Capita") +
+  labs(title = "How Alcohol Consumption Relates to Happiness Scores by Country", fill='Legal Drinking Age')
+plot + scale_fill_brewer(palette="Blues")
+```
