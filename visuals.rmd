@@ -70,21 +70,27 @@ beerVsFree <- alcData %>%
   ggplot(aes(x = `Beer_PerCapita`, 
              y = `Freedom`)) +
   geom_point(alpha = .5) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  xlab("Beer Per Capita") +
+  ylab("Freedom Score")
 
 wineVsFree <- alcData %>%
   ggplot(aes(x = `Wine_PerCapita`, 
              y = `Freedom`)) +
   geom_point(alpha = .5) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  xlab("Wine Per Capita") +
+  ylab("Freedom Score") 
 
 spiritVsFree <- alcData %>%
   ggplot(aes(x = `Spirit_PerCapita`, 
              y = `Freedom`)) +
   geom_point(alpha = .5) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  xlab("Spirit Per Capita") +
+  ylab("Freedom Score") 
 
-grid.arrange(beerVsFree, wineVsFree, spiritVsFree, ncol=2)
+grid.arrange(beerVsFree, wineVsFree, spiritVsFree, ncol=2, top="How Alcohol Consumption Relates to Feelings of Freedom")
 ```
 
 ```{r}
@@ -92,7 +98,10 @@ alcData %>%
   ggplot(aes(x = `HappinessScore`, 
              y = `Freedom`)) +
   geom_point(alpha = .5) +
-  geom_smooth(method = "lm")
+  geom_smooth(method = "lm") +
+  xlab("Happiness Score") +
+  ylab("Freedom Score") +
+  labs(title = "How Feelings of Freedom Relate to Happiness Score of a Country")
 ```
 
 ```{r}
@@ -115,7 +124,7 @@ alcData <- alcData %>% mutate(total = (Spirit_PerCapita + Wine_PerCapita + Beer_
 
 alcData %>%
   ggplot(aes(x = `OnPremisePurchaseAge`, 
-             y = `totalAlc`)) +
+             y = `total`)) +
   geom_col(fill = "blue3") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
 facet_wrap(~Region) +
@@ -129,15 +138,15 @@ alcData <- alcData %>% arrange(alcData$HappinessRank)
 top <- alcData %>% head(5)
 bottom <- alcData %>% tail(5)
 alc<- full_join(top,bottom)
-alc <- alc %>% mutate(totalAlc = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
+alc <- alc %>% mutate(total = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
 alc %>%
   ggplot(aes(x = factor(Country,c('Denmark', 'Switzerland', 'Iceland', 'Norway', 'Finland', 'Chad', 'Madagascar', 'Tanzania', 'Liberia', 'Syria')), 
-             y = `totalAlc`, fill = GDP_PerCapita)) +
+             y = `total`, fill = GDP_PerCapita)) +
   geom_col() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("Top 5 and Bottom 5 Happiness Scoring Countries (Left to Right)") +
   ylab("Alcohol Consumption Per Capita") +
-  labs(title = "How Alcohol Consumption Relates to Happiness Scores by Country", fill='GDP Per Capita')
+  labs(title = "How Alcohol Consumption and GDP Relates to Happiness Scores by Country", fill='GDP Per Capita')
 ```
 
 ```{r}
@@ -145,14 +154,14 @@ alcData <- alcData %>% arrange(alcData$HappinessRank)
 top <- alcData %>% head(5)
 bottom <- alcData %>% tail(5)
 alc<- full_join(top,bottom)
-alc <- alc %>% mutate(totalAlc = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
+alc <- alc %>% mutate(total = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
 plot <- alc %>%
   ggplot(aes(x = factor(Country,c('Denmark', 'Switzerland', 'Iceland', 'Norway', 'Finland', 'Chad', 'Madagascar', 'Tanzania', 'Liberia', 'Syria')), 
-             y = `totalAlc`, fill = factor(OnPremisePurchaseAge))) +
+             y = `total`, fill = factor(OnPremisePurchaseAge))) +
   geom_col() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("Top 5 and Bottom 5 Happiness Scoring Countries (Left to Right)") +
   ylab("Alcohol Consumption Per Capita") +
-  labs(title = "How Alcohol Consumption Relates to Happiness Scores by Country", fill='Legal Drinking Age')
+  labs(title = "How Alcohol Consumption Relates and \nLegal Drinking Age to Happiness Scores by Country", fill='Legal Drinking Age')
 plot + scale_fill_brewer(palette="Blues")
 ```
