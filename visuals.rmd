@@ -122,17 +122,93 @@ facet_wrap(~Region) +
 ```
 
 ```{r}
-alcData <- alcData %>% mutate(total = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
+byRegion <- alcData %>% mutate(total = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
 
-alcData %>%
+a <- byRegion %>% filter(Region == "Australia and New Zealand") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+a <- a %>%
   ggplot(aes(x = `OnPremisePurchaseAge`, 
-             y = `total`)) +
+             y = mean)) +
   geom_col(fill = "blue3") +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
-facet_wrap(~Region) +
-  xlab("Legal Drinking Age") +
-  ylab("Alcohol Consumption Per Capita") +
-  labs(title = "How Alcohol Consumption Relates to Legal Drinking Age by Region")
+  scale_x_continuous(breaks=c(15,16,17,18,19,20,21)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "Australia and \nNew Zealand")
+
+ce <- byRegion %>% filter(Region == "Central and Eastern Europe") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+ce <- ce %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(18,20)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "Central and \nEastern Europe")
+
+ea <- byRegion %>% filter(Region == "Eastern Asia") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+ea <- ea %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(15,16,17,18,19,20,21)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "Eastern Asia")
+
+la <- byRegion %>% filter(Region == "Latin America and Caribbean") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+la <- la %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(16,18,20)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "Latin America and \nCaribbean")
+
+me <- byRegion %>% filter(Region == "Middle East and Northern Africa") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+me <- me %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(16,18)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "Middle East and \nNorthern Africa")
+
+na <- byRegion %>% filter(Region == "North America") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+na <- na %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(18,21)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "North America")
+
+sea <- byRegion %>% filter(Region == "Southeastern Asia") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+sea <- sea %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(18,20)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "SouthEastern Asia")
+
+sa <- byRegion %>% filter(Region == "Sub-Saharan Africa") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+sa <- sa %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(15,16,17,18,19,20,21)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +  ylim(0, 700) +
+  labs(title = "Sub-Saharan Africa")
+
+we <- byRegion %>% filter(Region == "Western Europe") %>% group_by(OnPremisePurchaseAge) %>% summarise(mean = mean(total))
+we <- we %>%
+  ggplot(aes(x = `OnPremisePurchaseAge`, 
+             y = mean)) +
+  geom_col(fill = "blue3") +
+  scale_x_continuous(breaks=c(15,16,17,18,19,20,21)) +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1),axis.title.x=element_blank(), axis.title.y=element_blank(), plot.title = element_text(size=10, hjust = 0.5)) +
+  ylim(0, 700) +
+  labs(title = "Western Europe")
+
+grid.arrange(a, ce, ea, la, me, na, sea, sa, we, ncol=3, top="How Alcohol Consumption Relates to Legal Drinking Age by Region",
+             bottom="Legal Drinking Age", 
+               left="Alcohol Consumption Per Capita")
 ```
 
 ```{r}
