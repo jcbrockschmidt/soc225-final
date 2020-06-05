@@ -77,10 +77,9 @@ write.csv(allData, "data/HappinessAlcoholRegulations-2016.csv", row.names=FALSE)
 alcData <- read_csv("data/HappinessAlcoholRegulations-2016.csv")
 ```
 
-## Add Total Alcohol Consumption
+## Create Total Alcohol Consumption Per Capita
 ```{r}
-alcData <- alcData %>%
-  mutate(TotalAlc_PerCapita = Beer_PerCapita + Wine_PerCapita + Spirit_PerCapita)
+alcData <- alcData %>% mutate(alcTotal = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
 ```
 
 ## Create Separate Dataframe For Countries Without Age Restrictions
@@ -106,15 +105,10 @@ sprintf("%d/%d rows removed", rowsBefore - rowsAfter, rowsBefore, rowsAfter)
 alcData
 ```
 
-## Create Numeric Variable
-```{r}
-alcData <- alcData %>% mutate(alcTotal = (Spirit_PerCapita + Wine_PerCapita + Beer_PerCapita))
-```
-
 # Plots
 ## How Alcohol Consumption Relates and \nLegal Drinking Age to Happiness Scores by Country
 ```{r}
-alcData <- alcData %>% arrange(alcData$HappinessRank)
+alcData <- alcData %>% arrange(alcData$"Happiness Rank")
 top <- alcData %>% head(5)
 bottom <- alcData %>% tail(5)
 alc<- full_join(top,bottom)
@@ -132,14 +126,14 @@ plot + scale_fill_brewer(palette="Blues")
 
 ## How Alcohol Consumption and GDP Relates to Happiness Scores by Country
 ```{r}
-alcData <- alcData %>% arrange(alcData$HappinessRank)
+alcData <- alcData %>% arrange(alcData$"Happiness Rank")
 top <- alcData %>% head(5)
 bottom <- alcData %>% tail(5)
 alc<- full_join(top,bottom)
 
 alc %>%
   ggplot(aes(x = factor(Country,c('Denmark', 'Switzerland', 'Iceland', 'Norway', 'Finland', 'Chad', 'Madagascar', 'Tanzania', 'Liberia', 'Syria')), 
-             y = `total`, fill = GDP_PerCapita)) +
+             y = `alcTotal`, fill = GDP_PerCapita)) +
   geom_col() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
   xlab("Top 5 and Bottom 5 Happiness Scoring Countries (Left to Right)") +
@@ -240,13 +234,13 @@ grid.arrange(a, ce, ea, la, me, na, sea, sa, we, ncol=3, top="How Alcohol Consum
 
 ## How Happiness Differs in Countries With and Without Age Restrictions
 ```{r}
-meanWithAge <- mean(alcData$HappinessScore)
-minWithAge <- min(alcData$HappinessScore)
-maxWithAge <- max(alcData$HappinessScore)
+meanWithAge <- mean(alcData$"Happiness Score")
+minWithAge <- min(alcData$"Happiness Score")
+maxWithAge <- max(alcData$"Happiness Score")
 
-meanNoAge <- mean(alcDataNoAge$HappinessScore)
-minNoAge <- min(alcDataNoAge$HappinessScore)
-maxNoAge <- max(alcDataNoAge$HappinessScore)
+meanNoAge <- mean(alcDataNoAge$"Happiness Score")
+minNoAge <- min(alcDataNoAge$"Happiness Score")
+maxNoAge <- max(alcDataNoAge$"Happiness Score")
 
 stat <- c(meanWithAge, meanNoAge, minWithAge, minNoAge, maxWithAge, maxNoAge)
 stat_type <- c("mean", "mean", "min", "min", "max", "max")
@@ -269,13 +263,13 @@ withWithoutAge %>%
 
 ## How Alcohol Consumption Differs in Countries With and Without Age Restrictions
 ```{r}
-meanWithAge <- mean(alcData$TotalAlc_PerCapita)
-minWithAge <- min(alcData$TotalAlc_PerCapita)
-maxWithAge <- max(alcData$TotalAlc_PerCapita)
+meanWithAge <- mean(alcData$alcTotal)
+minWithAge <- min(alcData$alcTotal)
+maxWithAge <- max(alcData$alcTotal)
 
-meanNoAge <- mean(alcDataNoAge$TotalAlc_PerCapita)
-minNoAge <- min(alcDataNoAge$TotalAlc_PerCapita)
-maxNoAge <- max(alcDataNoAge$TotalAlc_PerCapita)
+meanNoAge <- mean(alcDataNoAge$alcTotal)
+minNoAge <- min(alcDataNoAge$alcTotal)
+maxNoAge <- max(alcDataNoAge$alcTotal)
 
 stat <- c(meanWithAge, meanNoAge, minWithAge, minNoAge, maxWithAge, maxNoAge)
 stat_type <- c("mean", "mean", "min", "min", "max", "max")
@@ -294,5 +288,13 @@ consWithWithoutAge %>%
   theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank()) +
   scale_fill_brewer(palette = "Paired")
+```
+
+## Show Relevant Summary Statistic
+```{r}
+used <- c("Country", "Region", "Happiness Score", "GDP_PerCapita",
+          "Beer_PerCapita", "Wine_PerCapita", "Spirit_PerCapita",
+          "OnPremisePurchaseAge", "alcTotal")
+summary(alcData[, used])
 ```
 
