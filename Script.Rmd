@@ -9,7 +9,7 @@ output:
 ---
 # Data Collection
 
-#Data Preparation
+# Data Preparation
 ## Install packages
 ```{r}
 #install.packages("tidyverse")
@@ -77,11 +77,23 @@ write.csv(allData, "data/HappinessAlcoholRegulations-2016.csv", row.names=FALSE)
 alcData <- read_csv("data/HappinessAlcoholRegulations-2016.csv")
 ```
 
-## Recoding Data to Numeric
+## Add Total Alcohol Consumption
+```{r}
+alcData <- alcData %>%
+  mutate(TotalAlc_PerCapita = Beer_PerCapita + Wine_PerCapita + Spirit_PerCapita)
+```
+
+## Create Separate Dataframe For Countries Without Age Restrictions
+```{r}
+alcDataNoAge <- alcData %>%
+  filter(OnPremisePurchaseAge == "No age minimum")
+```
+
+
+## Recoding Purchase Age Data to Numeric
 ```{r}
 alcData <- alcData %>%
   mutate(OnPremisePurchaseAge = parse_number(OnPremisePurchaseAge))
-
 ```
 
 ## Remove NA
@@ -225,3 +237,62 @@ grid.arrange(a, ce, ea, la, me, na, sea, sa, we, ncol=3, top="How Alcohol Consum
              bottom="Legal Drinking Age", 
                left="Alcohol Consumption Per Capita")
 ```
+
+## How Happiness Differs in Countries With and Without Age Restrictions
+```{r}
+meanWithAge <- mean(alcData$HappinessScore)
+minWithAge <- min(alcData$HappinessScore)
+maxWithAge <- max(alcData$HappinessScore)
+
+meanNoAge <- mean(alcDataNoAge$HappinessScore)
+minNoAge <- min(alcDataNoAge$HappinessScore)
+maxNoAge <- max(alcDataNoAge$HappinessScore)
+
+stat <- c(meanWithAge, meanNoAge, minWithAge, minNoAge, maxWithAge, maxNoAge)
+stat_type <- c("mean", "mean", "min", "min", "max", "max")
+stat_label <- c("Age Restrictions", "No Age Restrictions", "Age Restrictions", "No Age Restrictions", "Age Restrictions", "No Age Restrictions")
+withWithoutAge <- data.frame(stat, stat_type, stat_label)
+
+withWithoutAge %>%
+  ggplot(aes(x = stat_label,
+             y = stat,
+             fill = factor(stat_label))) +
+  geom_col() +
+  facet_wrap(~stat_type) +
+  xlab("Summary Statistics") +
+  ylab("Happiness Score") +
+  labs(title = "How Happiness Differs In Countries\nWith and Without Drinking Age Restrictions", fill='Drinking Restrictions') +
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  scale_fill_brewer(palette = "Paired")
+```
+
+## How Alcohol Consumption Differs in Countries With and Without Age Restrictions
+```{r}
+meanWithAge <- mean(alcData$TotalAlc_PerCapita)
+minWithAge <- min(alcData$TotalAlc_PerCapita)
+maxWithAge <- max(alcData$TotalAlc_PerCapita)
+
+meanNoAge <- mean(alcDataNoAge$TotalAlc_PerCapita)
+minNoAge <- min(alcDataNoAge$TotalAlc_PerCapita)
+maxNoAge <- max(alcDataNoAge$TotalAlc_PerCapita)
+
+stat <- c(meanWithAge, meanNoAge, minWithAge, minNoAge, maxWithAge, maxNoAge)
+stat_type <- c("mean", "mean", "min", "min", "max", "max")
+stat_label <- c("Age Restrictions", "No Age Restrictions", "Age Restrictions", "No Age Restrictions", "Age Restrictions", "No Age Restrictions")
+consWithWithoutAge <- data.frame(stat, stat_type, stat_label)
+
+consWithWithoutAge %>%
+  ggplot(aes(x = stat_label,
+             y = stat,
+             fill = factor(stat_label))) +
+  geom_col() +
+  facet_wrap(~stat_type) +
+  xlab("") +
+  ylab("Average Alcohol Consumption") +
+  labs(title = "Average Alcohol Consumption in Countries\nWith and Without Drinking Age Restrictions", fill='Drinking Restrictions') +
+  theme(axis.ticks.x = element_blank(),
+        axis.text.x = element_blank()) +
+  scale_fill_brewer(palette = "Paired")
+```
+
